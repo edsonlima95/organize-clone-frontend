@@ -42,7 +42,7 @@ function ProfileMenu({setMenuOpen}:MenuProps) {
                     {profile.cover ? (
                         <img src={`${process.env.NEXT_PUBLIC_APP_URL_API}/profile/${profile.cover}`} className="block mr-3 h-9 w-9 rounded-full" alt="Flowbite Logo" />
                     ) :
-                        (<img src="/images/profile.png" className="block mr-3 h-9 w-9 rounded" alt="Flowbite Logo" />)}
+                        (<img src="/images/profile.png" className="block mr-3 h-9 w-full rounded" alt="Flowbite Logo" />)}
 
                     <span className="self-center text-sm font-semibold whitespace-nowrap dark:text-white">Bem-vindo {profile.name}</span>
                 </a>

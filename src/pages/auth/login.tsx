@@ -37,7 +37,6 @@ function Login() {
            
             localStorage.setItem("organize.wallet", JSON.stringify(wallet))
 
-
             api.defaults.headers['Authorization'] = `Bearer ${token}`;
 
             Router.push("/")
