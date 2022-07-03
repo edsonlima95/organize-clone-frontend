@@ -57,6 +57,8 @@ function Profile() {
         toast.success(response.data.message)
     }
 
+    console.log(profile?.cover)
+
     return (
         <Layout>
 
@@ -67,7 +69,7 @@ function Profile() {
                             {profile?.cover ? (
                                 <img src={`${process.env.NEXT_PUBLIC_APP_URL_API}/profile/${profile.cover}`} className="block mr-3 h-20 sm:w-20 rounded-full" alt="Flowbite Logo" />
                             ) : 
-                            (<img src="images/profile.png" className=" block mr-3 h-9 h-24 rounded" alt="Flowbite Logo" />)}
+                            (<img src="/images/profile.png" className=" block mr-3 h-9 md:h-24 rounded" alt="Flowbite Logo" />)}
                             <input type="file" className="hidden" {...register('cover')} id="cover" />
                         </label>
                         <div className="mt-4">
