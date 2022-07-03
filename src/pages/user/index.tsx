@@ -1,6 +1,6 @@
 import { getCookie, setCookies } from "cookies-next"
 import { useContext, useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import ShowErrorMessage from "../../components/Message"
 import ModalHeader from "../../components/Modal/ModalHeader"
@@ -22,7 +22,16 @@ function Profile() {
 
     const {profile, setProfile} = useContext(AuthContext)
 
-    const { handleSubmit, register, setValue, reset, formState: { errors } } = useForm<User>()
+    //Mostra o preview da imagem que será enviada
+    const [showImage, setShowImage] = useState("")
+
+    //Recebe a imagem para ser enviada do formulario
+    const [Image, setImage] = useState()
+
+    //Recebe a imagem do usuario logado caso exista
+    const [cover, setCover] = useState<string | undefined>()
+
+    const { handleSubmit, register, setValue, control, formState: { errors } } = useForm<User>()
 
     useEffect(() => {
         try {
@@ -33,6 +42,8 @@ function Profile() {
             setValue('id', user.id)
             setValue('name', user.name)
             setValue('email', user.email)
+
+            setCover(user.cover)
         } catch (error) {
 
         }
@@ -44,7 +55,7 @@ function Profile() {
         const dataForm = new FormData();
 
         dataForm.append('id', String(data.id));
-        dataForm.append('cover', data.cover[0]);
+        dataForm.append('cover', Image);
         dataForm.append('name', data.name);
         dataForm.append('email', data.email);
         dataForm.append('password', data.password as string);
@@ -57,23 +68,37 @@ function Profile() {
         toast.success(response.data.message)
     }
 
-    console.log(profile?.cover)
+    function handleInputCover(event: any) {
 
+        setImage(event.target.files[0])
+        if (event.target.files[0]) {
+            setShowImage(URL.createObjectURL(event.target.files[0]))
+        }
+    }
     return (
         <Layout>
 
             <div className="container mx-auto shadow-md h-full md:w-5/12 rounded-lg bg-white p-5">
                 <form onSubmit={handleSubmit(updateProfile)}>
-                    <div className="flex flex-col items-center mb-5">
-                        <label htmlFor="cover">
-                            {profile?.cover ? (
-                                <img src={`${process.env.NEXT_PUBLIC_APP_URL_API}/profile/${profile.cover}`} className="block mr-3 h-20 sm:w-20 rounded-full" alt="Flowbite Logo" />
-                            ) : 
-                            (<img src="/images/profile.png" className=" block mr-3 h-9 md:h-24 rounded" alt="Flowbite Logo" />)}
-                            <input type="file" className="hidden" {...register('cover')} id="cover" />
-                        </label>
-                        <div className="mt-4">
-                            <small className="text-gray-400  font-semibold">Editar foto</small>
+                    <div className="flex flex-col items-center mb-5">                        
+                         <div className="flex flex-col w-5/12 ">
+                            <div className="flex flex-col  items-center justify-center">
+
+                                {cover && !showImage ? (<img src={`${process.env.NEXT_PUBLIC_API_URL}/profile/cover/${cover}`} className="w-[90px] h-[90px] rounded-full" alt="" />) : (<></>)}
+
+                                {showImage ? (<img src={showImage} alt="" className="w-[90px] h-[90px] rounded-full" />)
+                                    : (!cover ? <img src="/images/profile.png" alt="" className="w-[90px] h-[90px] rounded-full" /> : (<></>))}
+                                <label htmlFor="cover" className="mt-5 text-[#613387] font-semibold">Alterar foto</label>
+
+                            </div>
+                            <Controller
+                                control={control}
+                                name="cover"
+                                render={({ field }) => (
+                                    <input type="file" {...field} onChange={handleInputCover} id="cover" className="border rounded h-12 px-3 focus:outline-none hidden" />
+                                )}
+                            />
+                            <ShowErrorMessage error={errors.cover?.message} />
                         </div>
                     </div>
                     <div className="flex flex-col md:flex-row gap-3">

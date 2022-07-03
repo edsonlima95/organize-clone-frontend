@@ -1,6 +1,6 @@
 import { getCookie } from "cookies-next"
-import { useContext, useEffect, useRef, useState } from "react"
-import { useForm } from "react-hook-form"
+import React, { useContext, useEffect, useRef, useState } from "react"
+import { Controller, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import { InvoiceModalContext } from "../../contexts/InvoiceModalContext"
 import api from "../../services/axios"
@@ -10,6 +10,7 @@ import ShowErrorMessage from "../../components/Message"
 import { InvoiceContext } from "../../contexts/InvoiceContext"
 import { CalendarPlus } from "phosphor-react"
 import ModalHeader from "../../components/Modal/ModalHeader"
+import { currency } from '../../helpers/inputMaskCurrency'
 
 interface Invoice extends SearchProps {
     id?: number,
@@ -22,7 +23,7 @@ interface Invoice extends SearchProps {
     period: string,
     type: string,
     user_id: number | undefined,
-    value: number | undefined,
+    value: string | undefined,
     quantity?: number,
 }
 
@@ -73,7 +74,7 @@ function InvoiceForm() {
     })
 
     //REACT HOOK FORM PROPRIEDADES
-    const { handleSubmit, register, reset, setValue, setError, formState: { errors } } = useForm<Invoice>({
+    const { handleSubmit, register, reset, control, setValue, getValues, setError, formState: { errors } } = useForm<Invoice>({
         resolver: yupResolver(schema),
     })
 
@@ -82,7 +83,7 @@ function InvoiceForm() {
         const user = JSON.parse(getCookie("organize.user") as string)
 
         const wallet = JSON.parse(localStorage.getItem("organize.wallet") as string)
-        setWalletDefault(wallet)       
+        setWalletDefault(wallet)
 
         //CAMPOS DEFAULT
         setValue('user_id', user?.id)
@@ -137,7 +138,6 @@ function InvoiceForm() {
             toast.success(response.data.message)
             closeModal()
 
-
         }).catch(err => {
             console.log(err)
         })
@@ -171,7 +171,6 @@ function InvoiceForm() {
     //CADASTRA / EDITA O LANÇAMENTO
     async function launch(data: Invoice) {
 
-
         if (invoiceId) {
             update(data)
         } else {
@@ -198,6 +197,12 @@ function InvoiceForm() {
         resetFields()
     }
 
+
+    function handleCurrencyInputValue(e: React.ChangeEvent<HTMLInputElement>) {
+        const formatValue = e.target.value?.replace(".", "")
+        setValue('value', formatValue?.replace(",", "."))
+    }
+
     return (
         <>
             <ModalHeader invoice_type={invoiceType} icon={CalendarPlus} title={`${invoiceId ? 'Editar' : 'Lançar'}`} />
@@ -216,7 +221,12 @@ function InvoiceForm() {
 
                     <div className={`${invoiceId ? 'w-full' : 'w-6/12'}`}>
                         <label htmlFor="" className="text-gray-400 font-medium">Valor</label>
-                        <input type="text" {...register("value")} className="w-full border-gray-200 border-4  rounded p-3 focus:outline-none focus:ring-0 focus:border-[#06DD83]" />
+                        <Controller
+                            name="value"
+                            control={control}
+                            render={({ field }) => <input type="text" onChange={(e) => handleCurrencyInputValue(currency(e))} className="w-full border-gray-200 border-4  rounded p-3 focus:outline-none focus:ring-0 focus:border-[#06DD83]" />}
+                        />
+                        
                         <ShowErrorMessage error={errors.value?.message} />
                     </div>
                     <div className={`w-6/12 ${invoiceId && 'hidden'}`}>
