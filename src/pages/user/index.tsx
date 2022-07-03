@@ -84,7 +84,7 @@ function Profile() {
                          <div className="flex flex-col w-5/12 ">
                             <div className="flex flex-col  items-center justify-center">
 
-                                {cover && !showImage ? (<img src={`${process.env.NEXT_PUBLIC_API_URL}/profile/cover/${cover}`} className="w-[90px] h-[90px] rounded-full" alt="" />) : (<></>)}
+                                {cover && !showImage ? (<img src={`${process.env.NEXT_PUBLIC_APP_URL_API}/profile/${cover}`} className="w-[90px] h-[90px] rounded-full" alt="" />) : (<></>)}
 
                                 {showImage ? (<img src={showImage} alt="" className="w-[90px] h-[90px] rounded-full" />)
                                     : (!cover ? <img src="/images/profile.png" alt="" className="w-[90px] h-[90px] rounded-full" /> : (<></>))}

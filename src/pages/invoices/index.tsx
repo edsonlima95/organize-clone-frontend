@@ -112,12 +112,9 @@ function Invoices() {
         setPaginate(meta)
     }
 
-
     async function deleteInvoice(data: FormProps) {
 
-        // console.log(data)
-
-        // return
+        
         const search = JSON.parse(sessionStorage.getItem("organize.search") as string)
 
         api.delete(`/invoices/${data.invoice}?page=${paginate?.current_page}&quantity=${data.quantity}&wallet=${walletDefault?.id}&start_date=${search?.start_date}&end_date=${search?.end_date}&invoice_type=${search?.invoice_type}`).then((response) => {
@@ -209,8 +206,6 @@ function Invoices() {
 
             <Filter />
 
-
-
             {invoices?.length > 0 ? (
                 <div className="container mx-auto bg-white md:w-8/12 shadow rounded-xl overflow-x-auto">
                     <>
@@ -251,7 +246,7 @@ function Invoices() {
                                             {invoice.description}
                                         </th>
                                         <td className="px-6 py-4">
-                                            {invoice.value}
+                                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(invoice.value)}
                                         </td>
                                         <td className="px-6 py-4">
                                             {invoice.wallet.title}
