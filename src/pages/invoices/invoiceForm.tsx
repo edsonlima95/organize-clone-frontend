@@ -10,7 +10,7 @@ import ShowErrorMessage from "../../components/Message"
 import { InvoiceContext } from "../../contexts/InvoiceContext"
 import { CalendarPlus } from "phosphor-react"
 import ModalHeader from "../../components/Modal/ModalHeader"
-import { currency } from '../../helpers/inputMaskCurrency'
+import {currency} from '../../helpers/inputMaskCurrency'
 
 interface Invoice extends SearchProps {
     id?: number,
@@ -74,7 +74,7 @@ function InvoiceForm() {
     })
 
     //REACT HOOK FORM PROPRIEDADES
-    const { handleSubmit, register, reset, control, setValue, getValues, setError, formState: { errors } } = useForm<Invoice>({
+    const { handleSubmit, register, reset,control, setValue, getValues, setError, formState: { errors } } = useForm<Invoice>({
         resolver: yupResolver(schema),
     })
 
@@ -197,7 +197,7 @@ function InvoiceForm() {
         resetFields()
     }
 
-
+    
     function handleCurrencyInputValue(e: React.ChangeEvent<HTMLInputElement>) {
         const formatValue = e.target.value?.replace(".", "")
         setValue('value', formatValue?.replace(",", "."))
@@ -226,6 +226,7 @@ function InvoiceForm() {
                             control={control}
                             render={({ field }) => <input type="text" onChange={(e) => handleCurrencyInputValue(currency(e))} className="w-full border-gray-200 border-4  rounded p-3 focus:outline-none focus:ring-0 focus:border-[#06DD83]" />}
                         />
+                        {/* <CurrencyInput decimalSeparator="," groupSeparator="." {...register("value")} className="w-full border-gray-200 border-4  rounded p-3 focus:outline-none focus:ring-0 focus:border-[#06DD83]" /> */}
                         
                         <ShowErrorMessage error={errors.value?.message} />
                     </div>
